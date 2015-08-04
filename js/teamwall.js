@@ -7,11 +7,25 @@ function TeamwallApp() {
             dataType: 'json',
             cache: false,
             success: function configureDashboard(config) {
-                teamwall.app.instruments = teamwall.instruments.createInstruments(config.instruments);
-                teamwall.app.canvases = teamwall.instruments.createInstrumentCanvases(teamwall.app.instruments, config.layouts);
-                teamwall.render.drawCanvases(teamwall.app.canvases);
-                makeItDraggable();
-                teamwall.instruments.updateInstruments();
+                var init = function() {
+                  teamwall.app.instruments = teamwall.instruments.createInstruments(config.instruments);
+                  teamwall.app.canvases = teamwall.instruments.createInstrumentCanvases(teamwall.app.instruments, config.layouts);
+                  teamwall.render.drawCanvases(teamwall.app.canvases);
+                  makeItDraggable();
+                  teamwall.instruments.updateInstruments();
+                }
+
+                if (config.sources instanceof Array) {
+                  var counter = config.sources.length;
+                  config.sources.forEach(function(url) {
+                    $.getScript(url, function() {
+                      counter--;
+                      if (counter === 0) {
+                        init();
+                      }
+                    });
+                  });
+                }
             },
             statusCode: {
                 404: error404

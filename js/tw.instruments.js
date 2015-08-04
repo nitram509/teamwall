@@ -64,6 +64,18 @@ teamwall.instruments.createInstruments = function (instrumentConfigurations) {
                 instrument = teamwall.instrument.imageArea(instrumentConfiguration);
                 break;
             default:
+                var path = instrumentConfiguration.instrument.indexOf('.') === -1 ? instrumentConfiguration.instrument : instrumentConfiguration.instrument.split('.');
+                var root = window;
+                for (var i = 0; i < path.length; i++) {
+                  if ((i !== path.length - 1 && typeof root[path[i]] === 'object') || (i === path.length - 1 && typeof root[path[i]] === 'function')) {
+                    root = root[path[i]];
+                  } else {
+                    return;
+                  }
+                }
+                if (typeof root === 'function') {
+                  instrument = root(instrumentConfiguration);
+                }
                 break;
         }
         if (instrument) {
