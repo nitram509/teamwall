@@ -63,6 +63,9 @@ teamwall.instruments.createInstruments = function (instrumentConfigurations) {
             case "imagearea" :
                 instrument = teamwall.instrument.imageArea(instrumentConfiguration);
                 break;
+            case "listbox" :
+                instrument = teamwall.instrument.listBox(instrumentConfiguration);
+                break;
             default:
                 break;
         }

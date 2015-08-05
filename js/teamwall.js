@@ -7,11 +7,11 @@ function TeamwallApp() {
             dataType: 'json',
             cache: false,
             success: function configureDashboard(config) {
-                teamwall.app.instruments = teamwall.instruments.createInstruments(config.instruments);
-                teamwall.app.canvases = teamwall.instruments.createInstrumentCanvases(teamwall.app.instruments, config.layouts);
-                teamwall.render.drawCanvases(teamwall.app.canvases);
-                makeItDraggable();
-                teamwall.instruments.updateInstruments();
+              teamwall.app.instruments = teamwall.instruments.createInstruments(config.instruments);
+              teamwall.app.canvases = teamwall.instruments.createInstrumentCanvases(teamwall.app.instruments, config.layouts);
+              teamwall.render.drawCanvases(teamwall.app.canvases);
+              makeItDraggable();
+              teamwall.instruments.updateInstruments();
             },
             statusCode: {
                 404: error404
