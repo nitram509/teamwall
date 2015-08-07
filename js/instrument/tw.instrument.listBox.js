@@ -1,5 +1,5 @@
 teamwall.instrument.listBox = function(configuration) {
-  function MeetupsInstrument(configuration) {
+  function ListBoxInstrument(configuration) {
 
     var instrumentConfiguration = configuration;
 
@@ -68,12 +68,17 @@ teamwall.instrument.listBox = function(configuration) {
       var lengthOfBuildChain = data.length;
       if (lengthOfBuildChain > 0) {
 
+        context.font = Math.round(teamwall.render.fontSizeForHeader(canvas) / 2) + "pt " + teamwall.configuration.font;
         var heightOfOneBlock = headingOffSet / lengthOfBuildChain;
-        var heightOfOneBlock = getTextHeight(context.font).height * 2.5;
+        var heightOfOneBlock = getTextHeight(context.font).height * 1.8;
         var part = 0;
         jQuery.each(data, function() {
-          var text = this;
-          context.fillStyle = teamwall.configuration.colorBackground;
+          var text = typeof this === 'string' || this instanceof String ? this + '' : this.text;
+          if (typeof this !== 'string' && typeof this.color !== 'undefined') {
+              context.fillStyle = this.color;
+          } else {
+            context.fillStyle = teamwall.configuration.colorBackground;
+          }
           context.fillRect(0, (part * heightOfOneBlock) + buildChainStartOffSet, canvas.width, heightOfOneBlock);
           if (part !== data.length - 1) {
             context.beginPath();
@@ -87,16 +92,16 @@ teamwall.instrument.listBox = function(configuration) {
           context.fillStyle = teamwall.configuration.colorText;
 
           var metrics = context.measureText(text);
-          var width = metrics.width;
+          var width = metrics.width + 10;
           if (width > canvas.width) {
             while (width > canvas.width) {
               text = text.substr(0, text.length - 1);
               var metrics = context.measureText(text);
-              var width = metrics.width;
+              var width = metrics.width + 10;
             }
             text += '…';
           }
-          context.fillText(text, 0, part * heightOfOneBlock + (heightOfOneBlock / 2) + buildChainStartOffSet, canvas.width);
+          context.fillText(text, 5, part * heightOfOneBlock + (heightOfOneBlock / 2) + buildChainStartOffSet, canvas.width);
           part++;
         });
 
@@ -106,5 +111,5 @@ teamwall.instrument.listBox = function(configuration) {
       }
     }
   }
-  return new MeetupsInstrument(configuration)
+  return new ListBoxInstrument(configuration)
 };
