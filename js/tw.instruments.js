@@ -77,17 +77,56 @@ teamwall.instruments.createInstruments = function (instrumentConfigurations) {
 };
 
 teamwall.instruments.updateInstruments = function () {
+    var counter = teamwall.app.instruments.length;
+    var errors = [];
     jQuery.each(teamwall.app.instruments, function () {
         var instrument = this;
+        var url = instrument.getConfiguration().url;
+        console.log(url);
         $.ajax({
-            url: instrument.getConfiguration().url,
+            url: url,
             dataType: 'json',
             cache: false,
-            success: updateInstrumentValue
+            success: updateInstrumentValue,
+            error: updateError,
+            complete: function() {
+              counter--;
+              if (counter === 0) {
+                displayErrors();
+              }
+            }
         });
+
+        function updateError() {
+            errors.push('Error retrieving data for instrument from url: "' + instrument.getConfiguration().url + '"');
+        }
 
         function updateInstrumentValue(data) {
             instrument.setValue(data);
         }
     });
+
+    function displayErrors() {
+        console.log('displaying errors', errors.length);
+        if (errors.length === 0) {
+          $('body div.error').remove();
+          return;
+        }
+        var div, span;
+        if ($('body div.error').length === 0) {
+          div = document.createElement('div');
+          $('body').append(div);
+          $(div).addClass('error');
+        } else {
+          div = $('body div.error');
+          $(div).empty();
+        }
+        span = document.createElement('span');
+        $(div).append(span);
+        errors.forEach(function(error) {
+            $(span).append(document.createTextNode(error));
+            $(span).append(document.createElement('br'));
+        });
+
+    }
 };
